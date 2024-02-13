@@ -1,64 +1,74 @@
 pipeline {
     agent any
-
-    environment {
-        NODE_VERSION = '14.17.6'
-        YARN_VERSION = '1.22.17'
-    }
-
-    tools {
-        nodejs 'nodejs'
-    }
-
+  
     stages {
-        stage('Checkout') {
+        stage('SCM Checkout') {
             steps {
                 checkout scm
             }
+            // SCM'den kodu çek
         }
-
-        stage('Install Dependencies') {
+        
+        // stage('NPM Install') {
+        //     steps {
+        //         sh 'npm install selenium-webdriver'
+        //     }
+        //     // NPM bağımlılıklarını yükle
+        // }
+        
+        stage('Code Scan') {
             steps {
-                script {
-                    // Install Node.js and Yarn
-                    sh "npm install -g n"
-                    sh "n ${NODE_VERSION}"
-                    sh "npm install -g yarn@${YARN_VERSION}"
+                snykSecurity organisation: 'rahimet', projectName: 'RickAndMorty', severity: 'medium', snykInstallation: 'Snyk', snykTokenId: '	snyk-api-token-for-jenkins', targetFile: 'package.json'
+            }
+            // Güvenlik taraması yap
+        }
+        // stage('Image Scan') {
+        //      steps {
+        //         script {
+               
+        //             withDockerRegistry(credentialsId: 'dockerhub') {
+        //                 sh 'docker build -t rahimeturkmennn/app:${BUILD_ID} -f Dockerfile . '
+        //                 sh 'docker build -t rahimeturkmennn/mysql-database:${BUILD_ID} -f ./mysql/Dockerfile . '
+        //                 sh 'docker push rahimeturkmennn/app:${BUILD_ID}'
+        //                 sh 'docker push rahimeturkmennn/mysql-database:${BUILD_ID}'
+        //             }
 
-                    // Install project dependencies
-                    sh "yarn install"
-                }
+                  
+        //             sh "grype  mysql-database:latest"
+        //             sh "grype  app:latest"
+        //     }
+                    
+        // }
+        //   }
+        //   stage('Deploy to test cluster') {
+        //     steps {
+        //         // GKE kümesine dağıtım yapın
+        //         script {
+                    
+        //             sh 'curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" '
+                   
+        //             sh "gcloud auth activate-service-account --key-file=jenkins-sa.json"
+        //             sh "gcloud container clusters get-credentials cluster-1 --zone us-central1-a --project kubernetes-395008"
+        //             sh 'sed -i "s/latest/${BUILD_NUMBER}/g" ./k8s/app-deployment.yaml'
+        //             sh 'sed -i "s/latest/${BUILD_NUMBER}/g" ./k8s/mysql-deployment.yaml'
+        //             sh 'kubectl apply -f ./k8s/app-deployment.yaml'
+        //             sh 'kubectl apply -f ./k8s/mysql-deployment.yaml'
+                    
+        //         }
+        //     }
+        // }
+    
+         stage('Test') {
+            steps {
+                sh 'npm start'
+                sh 'sudo node selenium.js' // Selenium testini çalıştırın
             }
         }
-
-        stage('Run Tests') {
+        stage('Deploy to prod cluster') {
             steps {
-                script {
-                    // Run your test suite (replace with your actual test command)
-                    sh "yarn test"
-                }
+                sh 'echo başarılı'
             }
         }
-
-        stage('Build') {
-            steps {
-                script {
-                    // Build your project (replace with your actual build command)
-                    sh "yarn build"
-                }
-            }
-        }
-    }
-
-    post {
-        always {
-            // Clean up steps, if any
-        }
-        success {
-            // Additional steps to execute on success
-        }
-        failure {
-            // Additional steps to execute on failure
-        }
+        
     }
 }
