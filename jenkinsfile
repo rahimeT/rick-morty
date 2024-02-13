@@ -32,7 +32,7 @@ pipeline {
               steps {
                  script {
                
-                    withDockerRegistry(credentialsId: 'dockerhub') {
+                    withDockerRegistry([credentialsId: 'dockerHub-cred', url: 'https://hub.docker.com/']) {
                         sh 'docker build -t rahimeturkmennn/app:${BUILD_ID} -f Dockerfile . '
                         sh 'docker push rahimeturkmennn/app:${BUILD_ID}'
                   }
