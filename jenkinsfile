@@ -18,7 +18,7 @@ pipeline {
         
         stage('Code Scan') {
             steps {
-                snykSecurity organisation: 'rahimet', projectName: 'RickAndMorty', severity: 'medium', snykInstallation: 'Snyk', snykTokenId: '	snyk-api-token-for-jenkins', targetFile: 'package.json'
+                snykSecurity organisation: 'rahimet', projectName: 'RickAndMorty', severity: 'high', snykInstallation: 'Snyk', snykTokenId: '	snyk-api-token-for-jenkins', targetFile: 'package.json'
             }
             // Güvenlik taraması yap
         }
