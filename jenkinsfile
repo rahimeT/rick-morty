@@ -16,15 +16,18 @@ pipeline {
         //     // NPM bağımlılıklarını yükle
         // }
         
-        stage('Code Scan') {
-            steps {
-try {
+      stage('Code Scan') {
+    steps {
+        script {
+            try {
                 snykSecurity organisation: 'rahimet', projectName: 'RickAndMorty', severity: 'high', snykInstallation: 'Snyk', snykTokenId: 'snyk-api-token-for-jenkins', targetFile: 'package.json'
             } catch (Exception e) {
                 echo "Hata oluştu ancak devam ediliyor: ${e.message}"
-            }            }
-            // Güvenlik taraması yap
+            }
         }
+    }
+    // Güvenlik taraması yap
+}
         // stage('Image Scan') {
         //      steps {
         //         script {
