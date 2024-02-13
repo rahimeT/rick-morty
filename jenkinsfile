@@ -1,0 +1,64 @@
+pipeline {
+    agent any
+
+    environment {
+        NODE_VERSION = '14.17.6'
+        YARN_VERSION = '1.22.17'
+    }
+
+    tools {
+        nodejs 'nodejs'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                script {
+                    // Install Node.js and Yarn
+                    sh "npm install -g n"
+                    sh "n ${NODE_VERSION}"
+                    sh "npm install -g yarn@${YARN_VERSION}"
+
+                    // Install project dependencies
+                    sh "yarn install"
+                }
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                script {
+                    // Run your test suite (replace with your actual test command)
+                    sh "yarn test"
+                }
+            }
+        }
+
+        stage('Build') {
+            steps {
+                script {
+                    // Build your project (replace with your actual build command)
+                    sh "yarn build"
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            // Clean up steps, if any
+        }
+        success {
+            // Additional steps to execute on success
+        }
+        failure {
+            // Additional steps to execute on failure
+        }
+    }
+}
