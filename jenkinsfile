@@ -35,12 +35,9 @@ pipeline {
                     withDockerRegistry([credentialsId: 'dockerHub-cred', url: 'https://hub.docker.com/']) {
                         sh 'docker build -t rahimeturkmennn/app:${BUILD_ID} -f Dockerfile . '
                         sh 'docker push rahimeturkmennn/app:${BUILD_ID}'
-                  }
-
-                  
-                    sh "grype  mysql-database:latest"
-                    sh "grype  app:latest"
+            
              }
+}
                     
          }
           }
